@@ -15,6 +15,7 @@ function App() {
   const [error, setError] = useState(null);
   
   const [url, setUrl] = useState('https://github.com/greeenboi/mobile_Chatapp'); // Default URL
+  const [path, setPath] = useState('https://github.com/greeenboi/mobile_Chatapp'); // Default URL
   const [message, setMessage] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
@@ -42,7 +43,7 @@ function App() {
     event.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:8080/clone?url=${url}`);
+      const response = await fetch(`http://localhost:8080/clone?url=${url}&path=${path}`);
       const data = await response.json();
       setMessage(data.message);
     } catch (error) {
@@ -58,7 +59,7 @@ function App() {
         <h2>GitCthulu</h2>
       </header>
       <div className="git-clone">
-
+        <h1>Operations</h1>
         <button type="button" onClick={() => setIsDialogOpen(true)}>
           Clone Repository
         </button>
@@ -73,20 +74,20 @@ function App() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />
-            <label htmlFor="url">Git Repository URL:</label>
+            <label htmlFor="url">Local Path to Clone to:</label>
             <input
               type="text"
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              id="path"
+              placeholder="Local Path"
+              onChange={(e) => setPath(e.target.value)}
             />
             <button type="submit">Clone</button>
+            <p>{message}</p>
             <button type="button" onClick={() => setIsDialogOpen(false)}>
               Close
             </button>
           </form>
         </dialog>
-        <p>{message}</p>
         <p>{greetMsg}</p>
       </div>
     </div>

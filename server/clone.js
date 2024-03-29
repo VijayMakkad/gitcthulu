@@ -1,6 +1,7 @@
 import nodegit from 'nodegit';
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 
 const app = express();
 const port = 8080; // Set your desired port
@@ -11,17 +12,22 @@ app.use(cors({
 
 // Function to handle the cloning request (replace 'yourLocalPath' with a dynamic path)
 async function cloneRepository(req, res) {
-  const url = req.query.url || 'https://github.com/greeenboi/mobile_Chatapp'; // Allow URL customization via query string
-  const localPath = './greeenboi'; // Replace with a dynamically generated or user-provided path
+    const { url, path } = req.query; // Get the path from req.query
+    const localPath = path || './greeenboi'; // Set a default path if not provided // Replace with a dynamically generated or user-provided path
 
-  try {
-    const repo = await nodegit.Clone(url, localPath);
-    console.log(`Cloned '${path.basename(url)}' to '${repo.workdir()}'`);
-    res.json({ message: 'Clone successful!' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: `Cloning failed: ${err}` });
-  }
+    // Verify if the path exists
+    if (fs.existsSync(localPath)) {
+        return res.status(400).json({ message: 'Invalid path' });
+    }
+
+    try {
+        const repo = await nodegit.Clone(url, localPath);
+        console.log(`Cloned '${url}' to '${path}'`);
+        res.json({ message: 'Clone successful!' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: `Cloning failed: ${err}` });
+    }
 }
 
 async function getCommitHistory(req, res) {       
