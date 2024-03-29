@@ -2,7 +2,7 @@ import React from 'react';
 
 const CommitHistory = ({ commits }) => {
   if (!commits) {
-    return <p>Loading...</p>;
+    return <p>Enter the Commits...</p>;
   }
 
   if (!commits.length) {

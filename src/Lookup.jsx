@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 const LookupForm = ({ onSubmit }) => {
   const [url, setUrl] = useState('');
-
   const handleSubmit = (event) => {
     event.preventDefault();
     onSubmit(url);

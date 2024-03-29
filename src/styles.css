@@ -4,19 +4,34 @@
   line-height: 24px;
   font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
+  color: #0f0f0f; 
+  background-image: radial-gradient( circle 993px at 0.5% 50.5%,  rgba(137,171,245,0.37) 0%, rgba(245,247,252,1) 100.2% );
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+.navbar{
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  justify-content: flex-start;
+  gap: 1rem;
+  color:white;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
+
 }
 
 .container {
   margin: 0;
-  padding-top: 10vh;
+  /* padding-top: 10vh; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -112,6 +127,29 @@ button {
   }
 }
 
-.git-clone{
+.git-clone button{
   margin-bottom: 5rem;
+}
+
+
+.dialog-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  z-index: 999;
+}
+
+.dialog {
+  z-index: 1000;
+  position: fixed;
+  border-radius: 10px;
+  background-color: slategrey;
+  color: white;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  /* Add your dialog styles here */
 }

@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
+import gitcthulu from "./assets/gitcthulu.png";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import LookupForm from "./Lookup";
@@ -12,7 +13,10 @@ function App() {
   const [name, setName] = useState("");
   const [commits, setCommits] = useState(null);
   const [error, setError] = useState(null);
-
+  
+  const [url, setUrl] = useState('https://github.com/greeenboi/mobile_Chatapp'); // Default URL
+  const [message, setMessage] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
 
   const fetchCommitHistory = async (url) => {
@@ -34,9 +38,6 @@ function App() {
     // Handle initial state or potential future URL changes (optional)
   }, []);
 
-  const [url, setUrl] = useState('https://github.com/greeenboi/mobile_Chatapp'); // Default URL
-  const [message, setMessage] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -52,14 +53,26 @@ function App() {
 
   return (
     <div className="container">
+      <header className="navbar">
+        <img src={gitcthulu} alt="gitchthulu" style={{width:'4rem'}} />
+        <h2>GitCthulu</h2>
+      </header>
       <div className="git-clone">
 
         <button type="button" onClick={() => setIsDialogOpen(true)}>
           Clone Repository
         </button>
 
-        <dialog open={isDialogOpen}>
-          <form onSubmit={handleSubmit} className="col">
+        <div className={`${isDialogOpen ? 'dialog-background' : ''}`} onClick={() => setIsDialogOpen(false)}></div>
+        <dialog open={isDialogOpen} className={`${isDialogOpen? 'dialog' : 'hidden'}`}>
+          <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column'}}>
+            <label htmlFor="url">Git Repository URL:</label>
+            <input
+              type="text"
+              id="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
             <label htmlFor="url">Git Repository URL:</label>
             <input
               type="text"
@@ -75,13 +88,6 @@ function App() {
         </dialog>
         <p>{message}</p>
         <p>{greetMsg}</p>
-      </div>
-
-      <div className="commit-history">
-        <h1>Git Commit History Lookup</h1>
-        <LookupForm onSubmit={fetchCommitHistory} />
-        {error && <p className="error">{error}</p>}
-        <CommitHistory commits={commits} />
       </div>
     </div>
   );
