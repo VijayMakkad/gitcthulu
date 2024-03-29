@@ -18,7 +18,7 @@
 .navbar{
   display: flex;
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 100vw;
   justify-content: flex-start;
@@ -137,7 +137,7 @@ button {
   
 }
 .git-clone button{
-  margin-bottom: 5rem;
+  margin-top: 2rem;
   
 }
 .git-clone h1{
@@ -165,4 +165,21 @@ button {
   display: flex;
   flex-direction: column;
   /* Add your dialog styles here */
+}
+
+
+.terminal > pre {
+  font-family: 'Fira Code', monospace;
+  font-size: 1em;
+  line-height: 1.5em;
+  color: #f6f6f6;
+  background-color: #0f0f0f;
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+  overflow-y: auto;
+  height: 200px;
 }

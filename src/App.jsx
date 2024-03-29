@@ -1,11 +1,10 @@
 
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
 import gitcthulu from "./assets/gitcthulu.png";
-import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
-import LookupForm from "./Lookup";
-import CommitHistory from "./CommitHistory";
+import Terminal from "./terminal";
+import OpenIssuesList from "./Issues";
+
 
 
 function App() {
@@ -13,12 +12,18 @@ function App() {
   const [name, setName] = useState("");
   const [commits, setCommits] = useState(null);
   const [error, setError] = useState(null);
+  const [isIssuesOpen, setIsIssuesOpen] = useState(false);
+  const [owner, setOwner] = useState("");
+  const [repo, setRepo] = useState("");
+
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   
   const [url, setUrl] = useState('https://github.com/greeenboi/mobile_Chatapp'); // Default URL
   const [path, setPath] = useState('https://github.com/greeenboi/mobile_Chatapp'); // Default URL
   const [message, setMessage] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
+
 
   const fetchCommitHistory = async (url) => {
     try {
@@ -35,9 +40,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    // Handle initial state or potential future URL changes (optional)
-  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,39 +59,67 @@ function App() {
       <header className="navbar">
         <img src={gitcthulu} alt="gitchthulu" style={{width:'4rem'}} />
         <h2>GitCthulu</h2>
-      </header>
-      <div className="git-clone">
-        <h1>Operations</h1>
-        <button type="button" onClick={() => setIsDialogOpen(true)}>
-          Clone Repository
+        <button onClick={() => setIsIssuesOpen(!isIssuesOpen)}>
+          {isIssuesOpen ? 'Close Issues' : 'Open Issues'}
         </button>
+        <button onClick={() => setIsTerminalOpen(!isTerminalOpen)}>
+          {isTerminalOpen ? 'Close Terminal' : 'Open Terminal'}
+        </button>
+      </header>
+      {
+        isIssuesOpen ? (
+            <div className="git-clone">
+              <form onSubmit={handleSubmit}>
+                <label htmlFor="owner">Owner:</label>
+                <input type="text" id="owner" name="owner" value={owner} onChange={(e) => setOwner(e.target.value)} required />
+                <label htmlFor="repo">Repository:</label>
+                <input type="text" id="repo" name="repo" value={repo} onChange={(e) => setRepo(e.target.value)} required />
+                <button type="submit">Fetch Issues</button>
+              </form>
+              {owner && repo && <OpenIssuesList owner={owner} repo={repo} />}
+            </div>
+        ) : (
+        <div className="git-clone">
+          <h1>Operations</h1>
+          <button type="button" onClick={() => setIsDialogOpen(true)}>
+            Clone Repository
+          </button>
 
-        <div className={`${isDialogOpen ? 'dialog-background' : ''}`} onClick={() => setIsDialogOpen(false)}></div>
-        <dialog open={isDialogOpen} className={`${isDialogOpen? 'dialog' : 'hidden'}`}>
-          <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column'}}>
-            <label htmlFor="url">Git Repository URL:</label>
-            <input
-              type="text"
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-            />
-            <label htmlFor="url">Local Path to Clone to:</label>
-            <input
-              type="text"
-              id="path"
-              placeholder="Local Path"
-              onChange={(e) => setPath(e.target.value)}
-            />
-            <button type="submit">Clone</button>
-            <p>{message}</p>
-            <button type="button" onClick={() => setIsDialogOpen(false)}>
-              Close
-            </button>
-          </form>
-        </dialog>
-        <p>{greetMsg}</p>
-      </div>
+          <div className={`${isDialogOpen ? 'dialog-background' : ''}`} onClick={() => setIsDialogOpen(false)}></div>
+          <dialog open={isDialogOpen} className={`${isDialogOpen? 'dialog' : 'hidden'}`}>
+            <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column'}}>
+              <label htmlFor="url">Git Repository URL:</label>
+              <input
+                type="text"
+                id="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+              <label htmlFor="url">Local Path to Clone to:</label>
+              <input
+                type="text"
+                id="path"
+                placeholder="Local Path"
+                onChange={(e) => setPath(e.target.value)}
+              />
+              <button type="submit">Clone</button>
+              <p>{message}</p>
+              <button type="button" onClick={() => setIsDialogOpen(false)}>
+                Close
+              </button>
+            </form>
+          </dialog>
+          <p>{greetMsg}</p>
+        </div>
+
+        )
+      }
+      {isTerminalOpen && (
+        <div style={isTerminalOpen ? {} : { display: 'none' }}>
+          <Terminal />
+        </div>
+      )}
+        
     </div>
   );
 }

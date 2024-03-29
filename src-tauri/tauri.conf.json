@@ -14,12 +14,96 @@
       "all": false,
       "shell": {
         "all": false,
-        "open": true
+        "execute": true,
+        "sidecar": true,
+        "open": true,
+        "scope": [
+          {
+            "name": "run-git-commit",
+            "cmd": "git",
+            "args": ["commit", "-m", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-push",
+            "cmd": "git",
+            "args": ["push"]
+          },
+          {
+            "name": "run-git-pull",
+            "cmd": "git",
+            "args": ["pull"]
+          },
+          {
+            "name": "run-git-clone",
+            "cmd": "git",
+            "args": ["clone", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-branch",
+            "cmd": "git",
+            "args": ["branch"]
+          },
+          {
+            "name": "run-git-checkout",
+            "cmd": "git",
+            "args": ["checkout", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-status",
+            "cmd": "git",
+            "args": ["status"]
+          },
+          {
+            "name": "run-git-remote",
+            "cmd": "git",
+            "args": ["remote"]
+          },
+          {
+            "name": "run-git-remote-add",
+            "cmd": "git",
+            "args": ["remote", "add", { "validator": "\\S+" }, { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-remote-remove",
+            "cmd": "git",
+            "args": ["remote", "remove", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-remote-set-url",
+            "cmd": "git",
+            "args": ["remote", "set-url", { "validator": "\\S+" }, { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-remote-get-url",
+            "cmd": "git",
+            "args": ["remote", "get-url", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-remote-show",
+            "cmd": "git",
+            "args": ["remote", "show", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-remote-prune",
+            "cmd": "git",
+            "args": ["remote", "prune", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-remote-update",
+            "cmd": "git",
+            "args": ["remote", "update", { "validator": "\\S+" }]
+          },
+          {
+            "name": "run-git-remote-rename",
+            "cmd": "git",
+            "args": ["remote", "rename", { "validator": "\\S+" }, { "validator": "\\S+" }]
+          }
+        ]
       }
     },
     "windows": [
       {
-        "title": "tauri-app",
+        "title": "GitCthulu",
         "width": 800,
         "height": 600
       }
