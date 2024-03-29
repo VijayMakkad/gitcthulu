@@ -70,6 +70,43 @@ async function getCommitHistory(req, res) {
     }
   }
 
+async function getLatestCommits({repoPath}) {
+    try {
+      const repo = await nodegit.Repository.open('C:/Users/suvan/web dev/portfolio-blog');
+      const headCommit = await repo.getHeadCommit();
+    //   const remoteRef = await repo.getReferenceNames(3);
+      const remoteRef = await repo.getReferenceCommit("refs/remotes/origin/main");
+  
+  
+      return { remoteCommit: remoteRef.sha(), headCommit: headCommit.sha()};
+    } catch (error) {
+      console.error(error);
+      return { error: error.message };
+    }
+  }
+  
+  app.get('/compare-commits', async (req, res) => {
+    
+    const repoPath = 'C:/Users/suvan/projects/git_tauri/';
+  
+    const commits = await getLatestCommits(repoPath);
+  
+    if (commits.error) {
+      return res.status(500).json({ message: commits.error });
+    }
+  
+    const isSameCommit = commits.localCommit === commits.remoteCommit;
+  
+    res.json({
+      localCommit: commits.localCommit,
+      remoteCommit: commits.remoteCommit,
+      isSameCommit,
+        // remoteRef: commits.remoteRef
+    });
+  });
+
+  
+
 
 
 app.get('/commits', getCommitHistory);

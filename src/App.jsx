@@ -10,8 +10,10 @@ import OpenIssuesList from "./Issues";
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
+  const [repoPath, setRepoPath] = useState('');
   const [commits, setCommits] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [isIssuesOpen, setIsIssuesOpen] = useState(false);
   const [owner, setOwner] = useState("");
   const [repo, setRepo] = useState("");
@@ -22,6 +24,8 @@ function App() {
   const [path, setPath] = useState('https://github.com/greeenboi/mobile_Chatapp'); // Default URL
   const [message, setMessage] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isMergeEditorOpen, setIsMergeEditorOpen] = useState(false);
+  const [isOperationsOpen, setIsOperationsOpen] = useState(true);
   
 
 
@@ -54,6 +58,29 @@ function App() {
     }
   };
 
+  const handleSubmitMergeConflict = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Replace with your API endpoint URL if using a separate server
+      const response = await fetch(`http://localhost:8080/compare-commits?repoPath=${repoPath}`);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setCommits(data);
+    } catch (error) {
+      console.error(error);
+      setError(error.message || 'An error occurred.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="container">
       <header className="navbar">
@@ -65,9 +92,47 @@ function App() {
         <button onClick={() => setIsTerminalOpen(!isTerminalOpen)}>
           {isTerminalOpen ? 'Close Terminal' : 'Open Terminal'}
         </button>
-      </header>
+          <button onClick={() => { setIsMergeEditorOpen(!isMergeEditorOpen); setIsOperationsOpen(!isOperationsOpen) }}>
+            {isMergeEditorOpen ? 'Close Merge Conflict' : 'Open Merge conflict Editor'}
+          </button>
+        </header>
+
+
+        {isMergeEditorOpen && (
+          <div className="git-clone" style={isMergeEditorOpen ? {} : { display: 'none' }}>
+            <h1>Merge Conflict Editor</h1>
+            <p>Here you can resolve merge conflicts</p>
+
+            <form onSubmit={handleSubmitMergeConflict}>
+              <label htmlFor="repoPath">Git Repository Path:</label>
+              <input
+                type="text"
+                id="repoPath"
+                name="repoPath"
+                value={repoPath}
+                onChange={(e) => setRepoPath(e.target.value)}
+                required
+              />
+              <br />
+              <button type="submit" disabled={isLoading}>
+                {isLoading ? 'Loading...' : 'check for merge conflicts'}
+              </button>
+            </form>
+            {error && <p className="error">{error}</p>}
+            {commits && (
+              <div>
+                {/* <p>Local Commit: {commits.localCommit}</p>
+                <p>Remote Commit: {commits.remoteCommit}</p> */}
+                <p>Is there Merge Conflict Issue? : <span style={commits.isSameCommit ? {} : { color: 'coral', textShadow:'-moz-initial' }}>{commits.isSameCommit ? 'No conflict' : `Merge conflict with ${commits.remoteCommit}`}</span></p>
+              </div>
+            )}
+
+          </div>
+        )}
+
+
       {
-        isIssuesOpen ? (
+        isIssuesOpen && (
             <div className="git-clone">
               <form onSubmit={handleSubmit}>
                 <label htmlFor="owner">Owner:</label>
@@ -78,42 +143,43 @@ function App() {
               </form>
               {owner && repo && <OpenIssuesList owner={owner} repo={repo} />}
             </div>
-        ) : (
-        <div className="git-clone">
-          <h1>Operations</h1>
-          <button type="button" onClick={() => setIsDialogOpen(true)}>
-            Clone Repository
-          </button>
+        )}
+        {isOperationsOpen && (
+          <div className="git-clone">
+            <h1>Operations</h1>
+            <button type="button" onClick={() => setIsDialogOpen(true)}>
+              Clone Repository
+            </button>
 
-          <div className={`${isDialogOpen ? 'dialog-background' : ''}`} onClick={() => setIsDialogOpen(false)}></div>
-          <dialog open={isDialogOpen} className={`${isDialogOpen? 'dialog' : 'hidden'}`}>
-            <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column'}}>
-              <label htmlFor="url">Git Repository URL:</label>
-              <input
-                type="text"
-                id="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-              />
-              <label htmlFor="url">Local Path to Clone to:</label>
-              <input
-                type="text"
-                id="path"
-                placeholder="Local Path"
-                onChange={(e) => setPath(e.target.value)}
-              />
-              <button type="submit">Clone</button>
-              <p>{message}</p>
-              <button type="button" onClick={() => setIsDialogOpen(false)}>
-                Close
-              </button>
-            </form>
-          </dialog>
-          <p>{greetMsg}</p>
-        </div>
+            <div className={`${isDialogOpen ? 'dialog-background' : ''}`} onClick={() => setIsDialogOpen(false)}></div>
+            <dialog open={isDialogOpen} className={`${isDialogOpen? 'dialog' : 'hidden'}`}>
+              <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column'}}>
+                <label htmlFor="url">Git Repository URL:</label>
+                <input
+                  type="text"
+                  id="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                />
+                <label htmlFor="url">Local Path to Clone to:</label>
+                <input
+                  type="text"
+                  id="path"
+                  placeholder="Local Path"
+                  onChange={(e) => setPath(e.target.value)}
+                />
+                <button type="submit">Clone</button>
+                <p>{message}</p>
+                <button type="button" onClick={() => setIsDialogOpen(false)}>
+                  Close
+                </button>
+              </form>
+            </dialog>
+            <p>{greetMsg}</p>
+          </div>
 
-        )
-      }
+        )}
+
       {isTerminalOpen && (
         <div style={isTerminalOpen ? {} : { display: 'none' }}>
           <Terminal />
