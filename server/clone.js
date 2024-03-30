@@ -96,7 +96,7 @@ async function getLatestCommits({repoPath}) {
     }
   
     const isSameCommit = commits.localCommit === commits.remoteCommit;
-  
+    console.log('hello')
     res.json({
       localCommit: commits.localCommit,
       remoteCommit: commits.remoteCommit,

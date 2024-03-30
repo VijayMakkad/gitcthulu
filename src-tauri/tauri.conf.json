@@ -97,6 +97,7 @@
             "name": "run-git-remote-rename",
             "cmd": "git",
             "args": ["remote", "rename", { "validator": "\\S+" }, { "validator": "\\S+" }]
+        
           }
         ]
       }
