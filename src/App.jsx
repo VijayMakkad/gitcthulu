@@ -4,6 +4,7 @@ import gitcthulu from "./assets/gitcthulu.png";
 import "./App.css";
 import Terminal from "./terminal";
 import OpenIssuesList from "./Issues";
+import ChatComponent from "./ChatComponent";
 
 
 
@@ -26,6 +27,8 @@ function App() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isMergeEditorOpen, setIsMergeEditorOpen] = useState(false);
   const [isOperationsOpen, setIsOperationsOpen] = useState(true);
+  const [sha, setSha] = useState(''); 
+  const [commitData, setCommitData] = useState(null);
   
 
 
@@ -73,11 +76,23 @@ function App() {
 
       const data = await response.json();
       setCommits(data);
+      setSha(data.remoteCommit);
     } catch (error) {
       console.error(error);
       setError(error.message || 'An error occurred.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchCommitContent = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/commit-content`); 
+      const data = await response.json();
+      setCommitData(data);
+      console.log(data);
+    } catch (error) {
+      setError(error);
     }
   };
 
@@ -126,6 +141,17 @@ function App() {
                 <p>Is there Merge Conflict Issue? : <span style={commits.isSameCommit ? {} : { color: 'coral', textShadow:'-moz-initial' }}>{commits.isSameCommit ? 'No conflict' : `Merge conflict with ${commits.remoteCommit}`}</span></p>
               </div>
             )}
+
+            {/* <button onClick={fetchCommitContent} >
+              Fetch Commit Content
+            </button> */}
+            {/* {commitData && (
+              <div>
+                <h2>Commit Message</h2>
+                 <p>{commitData.message}</p> 
+              </div>
+            )} */}
+            <ChatComponent />
 
           </div>
         )}

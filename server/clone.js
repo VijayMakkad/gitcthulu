@@ -96,7 +96,7 @@ async function getLatestCommits({repoPath}) {
     }
   
     const isSameCommit = commits.localCommit === commits.remoteCommit;
-    console.log('hello')
+    // console.log('hello')
     res.json({
       localCommit: commits.localCommit,
       remoteCommit: commits.remoteCommit,
@@ -105,7 +105,26 @@ async function getLatestCommits({repoPath}) {
     });
   });
 
-  
+  app.get('/commit-content', async (req, res) => {
+    try{
+      // const commitSha = req.query.commitSha;
+      const repo = await nodegit.Repository.open('C:/Users/suvan/projects/git_tauri/');
+      console.log('repo', repo);
+      const headCommit = await repo.getHeadCommit();
+      console.log('headCommit', headCommit);
+      const commit = await repo.getCommit(`${headCommit.sha()}`);
+
+      const commitMessage = commit.lookup();
+      console.log(commitMessage);
+      res.json({
+        message: 'found commit content',
+        // ... other commit data you want to return
+      });
+    }  catch (error) {
+      console.error(error);
+      res.status(300).send('Error retrieving commit content');
+    }
+  });
 
 
 
